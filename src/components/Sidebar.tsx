@@ -14,6 +14,7 @@ import {
   Settings,
   ShieldCheck,
 } from "lucide-react";
+import type { Role } from "@/lib/types";
 
 const nav = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -24,11 +25,12 @@ const nav = [
   { href: "/approvals", label: "Approvals", icon: CheckCircle2 },
   { href: "/ai-analysis", label: "AI Analysis", icon: Sparkles },
   { href: "/reports", label: "Reports", icon: BarChart3 },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Settings", icon: Settings, adminOnly: true },
 ];
 
-export function Sidebar() {
+export function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname();
+  const items = nav.filter((n) => !n.adminOnly || role === "Admin");
   return (
     <aside className="w-60 shrink-0 bg-slate-900 text-slate-200 flex flex-col min-h-screen">
       <div className="px-5 py-5 border-b border-slate-800 flex items-center gap-2">
@@ -45,7 +47,7 @@ export function Sidebar() {
         </div>
       </div>
       <nav className="flex-1 px-2 py-3 space-y-0.5">
-        {nav.map((item) => {
+        {items.map((item) => {
           const active =
             item.href === "/"
               ? pathname === "/"

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
+import { UserProvider } from "@/components/UserProvider";
+import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Compliance Platform",
@@ -14,18 +16,25 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const user = getCurrentUser();
   return (
     <html lang="en">
       <body>
-        <div className="min-h-screen flex">
-          <Sidebar />
-          <div className="flex-1 flex flex-col min-w-0">
-            <Topbar />
-            <main className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto">
-              {children}
-            </main>
-          </div>
-        </div>
+        <UserProvider user={user}>
+          {user ? (
+            <div className="min-h-screen flex">
+              <Sidebar role={user.role} />
+              <div className="flex-1 flex flex-col min-w-0">
+                <Topbar user={user} />
+                <main className="flex-1 p-6 md:p-8 max-w-[1600px] w-full mx-auto">
+                  {children}
+                </main>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
+        </UserProvider>
       </body>
     </html>
   );
